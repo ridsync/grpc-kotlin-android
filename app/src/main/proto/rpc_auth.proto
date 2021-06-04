@@ -1,0 +1,45 @@
+syntax = "proto3";
+
+package com.oklab.grpc.proto;
+
+import "google/protobuf/any.proto";
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+
+// 회원가입
+message JoinRequest {
+
+    // 닉네임
+    string nickname = 3;
+
+    //나이
+    string age = 1;
+
+    //주소
+    string address = 2;
+
+
+}
+
+message JoinResponse {
+    string access_token = 1;
+}
+
+//로그인
+message LoginRequest {
+
+    string access_token = 1;
+
+    string device_id = 2;
+
+    string ad_id = 3;
+
+}
+
+message LoginResponse {
+
+    int64 idx = 1;
+
+    string access_token = 2;
+
+}

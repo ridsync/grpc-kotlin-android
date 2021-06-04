@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package com.oklab.grpc.proto;
+
+import "google/protobuf/any.proto";
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+
+import "rpc_auth.proto";
+
+service AuthService {
+
+    //회원가입
+    rpc Join (JoinRequest) returns (JoinResponse);
+
+    //로그인
+    rpc Login (LoginRequest) returns (LoginResponse);
+
+}
