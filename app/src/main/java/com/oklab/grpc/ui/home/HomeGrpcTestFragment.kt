@@ -24,7 +24,7 @@ class HomeGrpcTestFragment : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         homeViewModel =
             ViewModelProvider(this).get(HomeGrpcTestViewModel::class.java)
 
@@ -40,7 +40,7 @@ class HomeGrpcTestFragment : Fragment() {
 
     fun onClickGrpc(v: View){
 
-        homeViewModel.testRpcCall(requireContext())
+        homeViewModel.testRpcCall()
     }
 
 

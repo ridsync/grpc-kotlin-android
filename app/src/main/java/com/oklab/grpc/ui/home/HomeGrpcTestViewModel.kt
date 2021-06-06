@@ -11,13 +11,11 @@ import com.oklab.grpc.service.DomainDTO
 import com.oklab.grpc.service.TestGrpcService
 import com.oklab.grpc.service.option.RpcCallResponse
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.flow.onCompletion
-import kotlinx.coroutines.flow.onStart
-import kotlinx.coroutines.flow.single
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
-class HomeGrpcTestViewModel : ViewModel() {
+class HomeGrpcTestViewModel(context: Context) : ViewModel() {
 
     private val _text = MutableLiveData<String>().apply {
         value = "This is home Fragment"
@@ -28,11 +26,10 @@ class HomeGrpcTestViewModel : ViewModel() {
         value = false
     }
     val dataProgress: LiveData<Boolean> = _dataProgress
+    val grpcService = TestGrpcService(context)
+    val rpcCallProcess = RpcCallResponse(grpcService)
 
-
-    fun testRpcCall(context: Context) {
-        val grpcService = TestGrpcService(context)
-        val rpcCallProcess = RpcCallResponse(grpcService)
+    fun testRpcCall() {
 
         viewModelScope.launch(Dispatchers.IO){
             val request =  RpcAuth.JoinRequest.newBuilder().apply {
@@ -46,17 +43,48 @@ class HomeGrpcTestViewModel : ViewModel() {
                 .onCompletion { _dataProgress.value = false  }
                 .single()
 
-            when(result) {
-                is DomainDTO.Success -> {
-                    _text.value = result.data.accessToken
-                    Log.d("TAG","gRPC Success !! AccessToken = result.data.accessToken")
-                }
-                is DomainDTO.Failure -> {
-                    result.code
-                    result.message
-                    Log.d("TAG","gRPC Failure !! code: ${result.code} / Message: ${result.message}")
+            withContext(Dispatchers.Main) {
+                when (result) {
+                    is DomainDTO.Success -> {
+                        _text.value = result.data.accessToken
+                        Log.d("TAG", "gRPC Success !! AccessToken = result.data.accessToken")
+                    }
+                    is DomainDTO.Failure -> {
+                        result.code
+                        result.message
+                        Log.d(
+                            "TAG",
+                            "gRPC Failure !! code: ${result.code} / Message: ${result.message}"
+                        )
+                    }
                 }
             }
         }
     }
+
+    private val msFlowChat = MutableStateFlow(RpcAuth.Message.newBuilder().build())
+
+    fun sendMessageOnFlow() {
+        msFlowChat.value = RpcAuth.Message.newBuilder().apply {
+            message = "GRPC Message Hello !!"
+            msgType = "TEXT"
+        }.build()
+    }
+
+    fun startRpcCallStream() {
+        viewModelScope.launch(Dispatchers.IO){
+            val result = rpcCallProcess.handleCallResultAsFlow(Dispatchers.IO) {
+                grpcService.getAuthStub().chat(msFlowChat)
+            }
+            .flowOn(Dispatchers.IO)
+            .collect { recvMsg ->
+                // TODO 메세지 수신.
+                withContext(Dispatchers.Main) {
+                    recvMsg
+                }
+            }
+        }
+
+    }
+
 }

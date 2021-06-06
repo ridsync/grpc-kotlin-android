@@ -16,4 +16,7 @@ service AuthService {
     //로그인
     rpc Login (LoginRequest) returns (LoginResponse);
 
+    //로그인
+    rpc Chat (stream Message) returns (stream Message);
+
 }

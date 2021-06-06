@@ -109,12 +109,12 @@ class TestGrpcService (val application: Context) {
 //                .build()
 //            return authStub.join(request)
             // Example
-//        val searchReq = DtkService.MemberSearchRequest.newBuilder().apply {
+//        val searchReq = TestGrpcService.MemberSearchRequest.newBuilder().apply {
 //            hl = DtkService.LangType.KO
 //            today = Timestamp.getDefaultInstance()
 //        }
             // File Example
-//        DtkService.UploadPhotoRequest.newBuilder().apply {
+//        TestGrpcService.UploadPhotoRequest.newBuilder().apply {
 //            chunkData = ByteString.copyFrom(File("path").readBytes())
 //        }
 
