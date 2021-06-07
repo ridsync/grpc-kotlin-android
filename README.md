@@ -30,6 +30,7 @@ sourceSets{
     main.java.srcDirs += 'src/main/kotlin'
     test.java.srcDirs += 'src/test/kotlin'
     androidTest.java.srcDirs += 'src/androidTest/kotlin'
+    main.proto.srcDirs += 'src/main/proto'
 }
 
 protobuf {
@@ -75,6 +76,9 @@ dependencies {
 # Ignores: can't find referenced class javax.lang.model.element.Modifier
 -dontwarn com.google.errorprone.annotations.**
 ```
+
+- 컴파일할 Proto File 정의 파일들을 `main.proto.srcDirs`에서 지정한 디렉토리에 저장한다.
+
 
 - Android Studio(IDE)에서 빌드하면 gRPC 클래스가 지정된 Path에 자동 생성된다 
 - app/build/source/proto/{package or java path option in protofile}
